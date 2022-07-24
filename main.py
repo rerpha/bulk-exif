@@ -19,14 +19,15 @@ def apply_exif_edits(
     image = Image(file)
     image.make = make
     image.model = model
-    image.lens_make = lens_make
-    image.lens_model = lens_model
+    # Not working on 3.10.4
+    # image.lens_make = lens_make
+    # image.lens_model = lens_model
     if film:
         pass
     if focal_length:
         image.focal_length = focal_length
     image.iso = iso
-    print(filename)
+    return image
 
 
 if __name__ == "__main__":
@@ -48,9 +49,9 @@ if __name__ == "__main__":
         for filename in glob(_arg):
             if filename.lower().endswith(RAW_FILE_EXTS) and not args.raw:
                 break
-            with open(filename, "rb") as file:
-                apply_exif_edits(
-                    file,
+            with open(filename, "rb") as in_file, open(filename, "wb") as out_file:
+                image = apply_exif_edits(
+                    in_file,
                     args.make,
                     args.model,
                     args.lens_make,
@@ -59,3 +60,5 @@ if __name__ == "__main__":
                     args.iso,
                     args.focal_length,
                 )
+                if "y" in input(f"overwrite {filename}?").lower():
+                    out_file.write(image.get_file())
