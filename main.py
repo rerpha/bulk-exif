@@ -48,7 +48,7 @@ if __name__ == "__main__":
     for _arg in args.files:
         for filename in glob(_arg):
             if filename.lower().endswith(RAW_FILE_EXTS) and not args.raw:
-                break
+                print(f"ignoring {filename}, not JPG!")
             with open(filename, "rb") as in_file, open(filename, "wb") as out_file:
                 image = apply_exif_edits(
                     in_file,
